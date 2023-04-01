@@ -12,7 +12,9 @@ tunevt(
   step2 = "rtree",
   alpha0,
   p_reps,
+  threshold = NA,
   keepz = FALSE,
+  parallel = FALSE,
   ...
 )
 }
@@ -31,18 +33,28 @@ either "\code{lasso}", "\code{mars}", "\code{randomforest}", or
 "\code{superlearner}".}
 
 \item{step2}{a character string specifying the Step 2 model. Supports
-"\code{lasso}", "\code{rtree}", or "\code{ctree}".}
+"\code{lasso}", "\code{rtree}",  "\code{classtree}", or "\code{ctree}".}
 
 \item{alpha0}{the nominal Type I error rate.}
 
 \item{p_reps}{the number of permutations to run.}
 
+\item{threshold}{for "\code{step2 = 'classtree'}" only. The value against
+which to test if the estimated individual treatment effect from Step 1 is
+higher (TRUE) or lower (FALSE).}
+
 \item{keepz}{logical. Should the estimated CATE from Step 1 be returned?}
+
+\item{parallel}{Should the loop over replications be parallelized? If
+\code{FALSE}, then no, if \code{TRUE}, then yes.
+Note that running in parallel requires a \emph{parallel backend} that must be
+registered before performing the computation.
+See the \code{\link[foreach]{foreach}} documentation for more details.}
 
 \item{...}{additional arguments to the Step 1 model call.}
 }
 \value{
-an object of class \code{"tunevt"}.
+An object of class \code{"tunevt"}.
 
 An object of class \code{"tunevt"} is a list containing at least the
 following components:
@@ -54,6 +66,9 @@ with the permuted tuning parameter for the estimated CATEs from the
 \item{mnpp}{the MNPP for the estimated CATEs from Step 1.}
 \item{theta_null}{a vector of the MNPPs from each permutation under
 the null hypothesis.}
+\item{pvalue}{the probability of observing a MNPP as or more extreme
+as the observed MNPP under the null hypothesis of no effect
+heterogeneity.}
 \item{z}{if \code{keepz = TRUE}, the estimated CATEs from the
 \code{step1} model.}
 }
@@ -67,8 +82,10 @@ treatment effect is uniform across the study population.
 Virtual Twins is a two-step approach to detecting differential treatment
 effects. Subjects' conditional average treatment effects (CATEs) are first
 estimated in Step 1 using a flexible model. Then, a simple and interpretable
-model is fit in Step 2 to model these estimated CATEs as a function of the
-covariates.
+model is fit in Step 2 to model either (1) the expected value of these
+estimated CATEs if \code{step2} is equal to "\code{lasso}", "\code{rtree}",
+or "\code{ctree}" or (2) the probability that the CATE is greater than a
+specified \code{threshold} if \code{step2} is equal to "\code{classtree}".
 
 The Step 2 model is dependent on some tuning parameter. This parameter is
 selected to control the Type I error rate by permuting the data under the
@@ -80,6 +97,7 @@ data.
 }
 \examples{
 data(tehtuner_example)
+# Low p_reps for example use only
 tunevt(
   tehtuner_example, step1 = "lasso", step2 = "rtree",
   alpha0 = 0.2, p_reps = 5
@@ -92,6 +110,8 @@ tunevt(
 \insertRef{foster_subgroup_2011}{tehtuner}
 
 \insertRef{wolf_permutation_2022}{tehtuner}
+
+\insertRef{deng_practical_2023}{tehtuner}
 
 }
 }

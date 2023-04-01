@@ -1,9 +1,11 @@
 
 test_that(
   "Identifies Trt and Y", {
-    dat <- tehtuner_example[c(1:10, 101:110), ]
+    dat <- tehtuner_example[c(1:10, 501:510), ]
     names(dat)[names(dat) == "Trt"] <- "A"
     names(dat)[names(dat) == "Y"] <- "Outcome"
+
+    set.seed(1)
 
     expect_no_error(
       tunevt(

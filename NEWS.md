@@ -1,3 +1,21 @@
+# tehtuner
+
+# tehtuner 0.3.0
+
+Adds support for classification trees in Step 2 by setting 
+`step2 = 'classtree'` with a given threshold of `threshold`.
+
+Adds the `print.tunevt` method.
+
+# tehtuner 0.2.1
+
+Fixes a bug where `zbar` was calculated using the mean difference in the first
+column of the data instead of using the location of the variable Y.
+
+# tehtuner 0.2.0
+
+Adds the `parallel` option to `tunevt` to support parallel backends.
+
 # tehtuner 0.1.1
 
 This patch reconciles an invalid URI in the `tunevt` documentation's references.
